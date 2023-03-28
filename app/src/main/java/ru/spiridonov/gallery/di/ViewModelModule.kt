@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import ru.spiridonov.gallery.presentation.account.AccountViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardViewModel
 import ru.spiridonov.gallery.presentation.ui.home.HomeViewModel
@@ -31,4 +32,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     fun bindProfileViewModel(viewModel: ProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AccountViewModel::class)
+    fun bindAccountViewModel(viewModel: AccountViewModel): ViewModel
 }

@@ -44,18 +44,18 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
-
         observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.downloadData()
     }
 
     private fun observeViewModel() {
         viewModel.user.observe(viewLifecycleOwner) {
             if (it != null)
                 binding.textHome.text = it.toString()
-        }
-        viewModel.error.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty())
-                binding.textHome.text = it
         }
     }
 

@@ -32,7 +32,7 @@ class UserRepositoryImpl @Inject constructor(
                 val requestBody =
                     jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
                 apiService.registration(requestBody).also {
-                    if (parseUserResponseModel(it, callback)) return@launch
+                    parseUserResponseModel(it, callback)
                 }
             } catch (e: Exception) {
                 Log.d("UserRepositoryImpl", e.toString())
@@ -40,7 +40,6 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
     }
-
 
     override suspend fun login(
         email: String,
@@ -56,7 +55,7 @@ class UserRepositoryImpl @Inject constructor(
                 val requestBody =
                     jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
                 apiService.login(requestBody).also {
-                    if (parseUserResponseModel(it, callback)) return@launch
+                    parseUserResponseModel(it, callback)
                 }
             } catch (e: Exception) {
                 Log.d("UserRepositoryImpl", e.toString())
@@ -78,26 +77,22 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     private fun parseUserResponseModel(
-        it: Response<UserResponseModel>,
+        response: Response<UserResponseModel>,
         callback: (User?, String?) -> Unit
-    ): Boolean {
-        Log.d("UserRepositoryImpl", it.body().toString())
-        if (it.body() == null) {
-            Log.d("UserRepositoryImpl", it.message())
-            Log.d("UserRepositoryImpl", it.code().toString())
-            Log.d("UserRepositoryImpl", it.errorBody().toString())
-            callback(null, "Ошибка сервера")
-            return true
-        } else if (it.body()?.message == "Success") {
-            val user = dtoMapper.mapUserJsonContainerToUser(it.body()!!)
-            sharedPref.saveUser(user)
-            callback(user, null)
-        } else {
-            Log.d("UserRepositoryImpl", "message: ${it.body()?.message}")
-            Log.d("UserRepositoryImpl", "error: ${it.body()?.error}")
-            callback(null, it.body()?.message)
+    ) {
+        if (response.body() == null || !response.isSuccessful) {
+            Log.d("UserRepositoryImpl", "response.code" + response.code().toString())
+            response.errorBody()?.charStream()?.readText().also {
+                it?.let { errorJson ->
+                    val error = JSONObject(errorJson).getString("message")
+                    callback(null, error)
+                }
+            }
+            return
         }
-        return false
+        val user = dtoMapper.mapUserJsonContainerToUser(response.body()!!)
+        sharedPref.saveUser(user)
+        callback(user, null)
     }
 
 }

@@ -16,9 +16,7 @@ class MainViewModel @Inject constructor(
     val user: LiveData<User?>
         get() = _user
 
-    init {
-        viewModelScope.launch {
-            _user.postValue(getCurrentUserUseCase.invoke())
-        }
+    fun getCurrentUser() = viewModelScope.launch {
+        _user.postValue(getCurrentUserUseCase.invoke())
     }
 }

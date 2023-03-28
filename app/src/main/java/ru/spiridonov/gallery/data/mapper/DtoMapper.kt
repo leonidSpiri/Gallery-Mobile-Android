@@ -10,7 +10,7 @@ class DtoMapper @Inject constructor() {
             user_id = jsonContainer.data.userId,
             email = jsonContainer.data.email,
             passwordHash = jsonContainer.data.passwordHash,
-            username = jsonContainer.data.email,
+            username = jsonContainer.data.username,
             dateCreated = jsonContainer.data.dateCreated,
             accessToken = jsonContainer.data.accessToken
         )

@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiFactory {
     //const val BASE_URL = "http://home-system.sknt.ru:3000/"
     const val BASE_URL = "http://10.8.0.2:3000/"
+
     private val json = GsonBuilder()
         .setLenient()
         .create()
