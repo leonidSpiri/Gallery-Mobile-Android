@@ -6,5 +6,5 @@ import javax.inject.Inject
 class DeleteAccountUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(callback: (Boolean) -> Unit) = repository.deleteAccount(callback)
+    suspend operator fun invoke(callback: (Boolean, String?) -> Unit) = repository.deleteAccount(callback)
 }

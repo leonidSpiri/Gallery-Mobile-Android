@@ -6,6 +6,6 @@ import javax.inject.Inject
 class LogoutUseCase @Inject constructor(
     private val repository: UserRepository
 ) {
-    suspend operator fun invoke(callback: (Boolean) -> Unit) =
+    suspend operator fun invoke(callback: (Boolean, String?) -> Unit) =
         repository.logout(callback)
 }

@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation
+package ru.spiridonov.gallery.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

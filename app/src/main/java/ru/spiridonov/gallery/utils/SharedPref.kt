@@ -20,20 +20,20 @@ class SharedPref @Inject constructor(
     fun saveUser(user: User) {
         setUnnamedSharedPref("user_info", "uuid", user.user_id)
         setUnnamedSharedPref("user_info", "email", user.email)
-        user.password_hash?.let { setUnnamedSharedPref("user_info", "password_hash", it) }
+        user.passwordHash?.let { setUnnamedSharedPref("user_info", "password_hash", it) }
         setUnnamedSharedPref("user_info", "username", user.username)
-        setUnnamedSharedPref("user_info", "date_created", user.date_created)
-        setUnnamedSharedPref("user_info", "access_token", user.access_token)
+        setUnnamedSharedPref("user_info", "date_created", user.dateCreated)
+        setUnnamedSharedPref("user_info", "access_token", user.accessToken)
     }
 
     fun getUser() =
         User(
             user_id = getUnnamedSharedPref("user_info", "uuid") ?: "",
             email = getUnnamedSharedPref("user_info", "email") ?: "",
-            password_hash = getUnnamedSharedPref("user_info", "password_hash"),
+            passwordHash = getUnnamedSharedPref("user_info", "password_hash"),
             username = getUnnamedSharedPref("user_info", "username") ?: "",
-            date_created = getUnnamedSharedPref("user_info", "date_created") ?: "",
-            access_token = getUnnamedSharedPref("user_info", "access_token") ?: "",
+            dateCreated = getUnnamedSharedPref("user_info", "date_created") ?: "",
+            accessToken = getUnnamedSharedPref("user_info", "access_token") ?: "",
         )
 
     fun clearUser() =

@@ -5,14 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentDashboardBinding
-import ru.spiridonov.gallery.databinding.FragmentHomeBinding
-import ru.spiridonov.gallery.presentation.ViewModelFactory
-import ru.spiridonov.gallery.presentation.ui.home.HomeViewModel
+import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
 class DashboardFragment : Fragment() {
