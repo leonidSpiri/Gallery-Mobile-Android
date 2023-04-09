@@ -5,21 +5,25 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.spiridonov.gallery.domain.entity.Media
 import ru.spiridonov.gallery.domain.entity.User
+import ru.spiridonov.gallery.domain.usecases.media_usecases.GetMediaFromAlbumUseCase
 import ru.spiridonov.gallery.domain.usecases.user_usecases.GetCurrentUserUseCase
 import ru.spiridonov.gallery.domain.usecases.user_usecases.LoginUseCase
 import ru.spiridonov.gallery.domain.usecases.user_usecases.RegisterUseCase
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getMediaFromAlbumUseCase: GetMediaFromAlbumUseCase
 ) : ViewModel() {
-    private val _user = MutableLiveData<User?>()
-    val user: LiveData<User?>
-        get() = _user
+    private val _media = MutableLiveData<List<Media>>()
+    val media: LiveData<List<Media>>
+        get() = _media
 
-    fun downloadData() =
+    fun downloadAllMediaInfo() =
         viewModelScope.launch {
-            _user.postValue(getCurrentUserUseCase.invoke())
+            getMediaFromAlbumUseCase.invoke("all") {
+                _media.postValue(it)
+            }
         }
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentHomeBinding
+import ru.spiridonov.gallery.presentation.adapters.MediaItemAdapter
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
@@ -25,7 +26,13 @@ class HomeFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
+    @Inject
+    lateinit var mediaItemAdapter: MediaItemAdapter
+
     private lateinit var viewModel: HomeViewModel
+
+
 
     override fun onAttach(context: Context) {
         component.inject(this)
@@ -45,18 +52,18 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[HomeViewModel::class.java]
         observeViewModel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.downloadData()
+        setupRecyclerView()
     }
 
     private fun observeViewModel() {
-        viewModel.user.observe(viewLifecycleOwner) {
-            if (it != null)
-                binding.textHome.text = it.toString()
+        viewModel.downloadAllMediaInfo()
+        viewModel.media.observe(viewLifecycleOwner) {
+            mediaItemAdapter.submitList(it)
         }
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvMediaList.adapter = mediaItemAdapter
     }
 
     override fun onDestroyView() {

@@ -7,6 +7,6 @@ import javax.inject.Inject
 class GetMediaFromAlbumUseCase @Inject constructor(
     private val repository: MediaRepository
 ) {
-    suspend operator fun invoke(albumId: String, callback: (List<Media>) -> Unit) =
-        repository.getMediaFromAlbum(albumId, callback)
+    suspend operator fun invoke(albumName: String, callback: (List<Media>) -> Unit) =
+        repository.getMediaFromAlbum(albumName, callback)
 }

@@ -1,10 +1,11 @@
 package ru.spiridonov.gallery.domain.repository
 
+import android.graphics.Bitmap
 import ru.spiridonov.gallery.domain.entity.Media
 import java.io.File
 
 interface MediaRepository {
-    suspend fun getMediaFromAlbum(albumId: String, callback: (List<Media>) -> Unit)
+    suspend fun getMediaFromAlbum(albumName: String, callback: (List<Media>) -> Unit)
 
     suspend fun getMedia(id: String, callback: (Media?) -> Unit)
 
@@ -14,5 +15,5 @@ interface MediaRepository {
 
     suspend fun deleteMedia(id: String, callback: (Boolean) -> Unit)
 
-    suspend fun downloadFile(id: String, fullSize: Boolean, callback: (File?) -> Unit)
+    suspend fun downloadFile(mediaPath: String, fullSize: Boolean, callback: (Bitmap?) -> Unit)
 }
