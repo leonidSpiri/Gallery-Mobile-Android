@@ -55,8 +55,12 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
     }
 
-    private fun observeViewModel() {
+    override fun onResume() {
+        super.onResume()
         viewModel.downloadAllMediaInfo()
+    }
+
+    private fun observeViewModel() {
         viewModel.media.observe(viewLifecycleOwner) {
             mediaItemAdapter.submitList(it)
         }

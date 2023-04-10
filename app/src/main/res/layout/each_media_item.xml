@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="-15dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
     </androidx.cardview.widget.CardView>
 </layout>

@@ -6,8 +6,9 @@ import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import ru.spiridonov.gallery.data.mapper.DtoMapper
 import ru.spiridonov.gallery.data.network.ApiFactory
 import ru.spiridonov.gallery.data.network.ApiService
@@ -15,6 +16,7 @@ import ru.spiridonov.gallery.domain.entity.Media
 import ru.spiridonov.gallery.domain.repository.MediaRepository
 import ru.spiridonov.gallery.utils.SharedPref
 import java.io.File
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -66,14 +68,14 @@ class MediaRepositoryImpl @Inject constructor(
 
 
                 val client = OkHttpClient().newBuilder()
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .writeTimeout(60, TimeUnit.SECONDS)
                     .build()
                 val request: Request = Request.Builder()
                     .url("${ApiFactory.BASE_URL}media/download_media/$path?fileName=$mediaPath")
                     .method("GET", null)
-                    .addHeader(
-                        "Authorization",
-                        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiN2FmYmEyYjYtNTg3ZS00MWJmLWFlNTQtYTU3ZWY1NWJiMjJhIiwidXNlckVtYWlsIjoiZW1haWwxQG1haWwuY29tIiwiaWF0IjoxNjgxMDQzMDg2LCJleHAiOjE2ODE5MDcwODZ9.bTosal-slCiJz9mbwviuGmE4-uQZnNAjpzgvYPcvulE"
-                    )
+                    .addHeader("Authorization", token)
                     .build()
                 val response: Response = client.newCall(request).execute()
 
