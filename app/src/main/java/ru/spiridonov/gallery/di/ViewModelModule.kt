@@ -7,6 +7,7 @@ import dagger.multibindings.IntoMap
 import ru.spiridonov.gallery.presentation.account.AccountViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardViewModel
+import ru.spiridonov.gallery.presentation.ui.fullscreen.FullScreenViewModel
 import ru.spiridonov.gallery.presentation.ui.home.HomeViewModel
 import ru.spiridonov.gallery.presentation.ui.profile.ProfileViewModel
 
@@ -37,4 +38,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(AccountViewModel::class)
     fun bindAccountViewModel(viewModel: AccountViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FullScreenViewModel::class)
+    fun bindFullScreenViewModel(viewModel: FullScreenViewModel): ViewModel
 }

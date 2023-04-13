@@ -7,6 +7,7 @@ import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.presentation.MainActivity
 import ru.spiridonov.gallery.presentation.account.LoginActivity
 import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardFragment
+import ru.spiridonov.gallery.presentation.ui.fullscreen.FullscreenActivity
 import ru.spiridonov.gallery.presentation.ui.home.HomeFragment
 import ru.spiridonov.gallery.presentation.ui.profile.ProfileFragment
 
@@ -26,6 +27,8 @@ interface ApplicationComponent {
     fun inject(activity: MainActivity)
 
     fun inject(activity: LoginActivity)
+
+    fun inject(activity: FullscreenActivity)
 
     fun inject(fragment: DashboardFragment)
 

@@ -1,7 +1,9 @@
 package ru.spiridonov.gallery.domain.entity
 
 import android.graphics.Bitmap
+import android.os.Parcelable
 
+@kotlinx.parcelize.Parcelize
 data class Media(
     val media_id: String,
     val album_id: String,
@@ -15,4 +17,4 @@ data class Media(
     val is_favourite: Boolean,
     val is_deleted: Boolean,
     var photoFile: Bitmap? = null
-)
+): Parcelable

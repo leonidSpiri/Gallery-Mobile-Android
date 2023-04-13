@@ -6,11 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.spiridonov.gallery.domain.entity.Media
-import ru.spiridonov.gallery.domain.entity.User
 import ru.spiridonov.gallery.domain.usecases.media_usecases.GetMediaFromAlbumUseCase
-import ru.spiridonov.gallery.domain.usecases.user_usecases.GetCurrentUserUseCase
-import ru.spiridonov.gallery.domain.usecases.user_usecases.LoginUseCase
-import ru.spiridonov.gallery.domain.usecases.user_usecases.RegisterUseCase
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
@@ -20,10 +16,12 @@ class HomeViewModel @Inject constructor(
     val media: LiveData<List<Media>>
         get() = _media
 
-    fun downloadAllMediaInfo() =
-        viewModelScope.launch {
-            getMediaFromAlbumUseCase.invoke("all") {
-                _media.postValue(it)
+    fun downloadAllMediaInfo() {
+        if (_media.value.isNullOrEmpty())
+            viewModelScope.launch {
+                getMediaFromAlbumUseCase.invoke("all") {
+                    _media.postValue(it)
+                }
             }
-        }
+    }
 }

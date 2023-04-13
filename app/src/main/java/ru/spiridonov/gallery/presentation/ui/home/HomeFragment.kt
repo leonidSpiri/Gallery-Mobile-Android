@@ -1,5 +1,6 @@
 package ru.spiridonov.gallery.presentation.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentHomeBinding
 import ru.spiridonov.gallery.presentation.adapters.MediaItemAdapter
+import ru.spiridonov.gallery.presentation.ui.fullscreen.FullScreenViewModel
+import ru.spiridonov.gallery.presentation.ui.fullscreen.FullscreenActivity
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
@@ -31,7 +34,6 @@ class HomeFragment : Fragment() {
     lateinit var mediaItemAdapter: MediaItemAdapter
 
     private lateinit var viewModel: HomeViewModel
-
 
 
     override fun onAttach(context: Context) {
@@ -60,14 +62,20 @@ class HomeFragment : Fragment() {
         viewModel.downloadAllMediaInfo()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun observeViewModel() {
         viewModel.media.observe(viewLifecycleOwner) {
             mediaItemAdapter.submitList(it)
+            mediaItemAdapter.notifyDataSetChanged()
         }
     }
 
     private fun setupRecyclerView() {
         binding.rvMediaList.adapter = mediaItemAdapter
+        mediaItemAdapter.onItemClickListener = {
+            val intent = FullscreenActivity.newIntentImage(requireContext(), it)
+            startActivity(intent)
+        }
     }
 
     override fun onDestroyView() {

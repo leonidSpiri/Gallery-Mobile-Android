@@ -37,7 +37,8 @@ class MediaRepositoryImpl @Inject constructor(
                             val media = mediaList[i]
                             downloadFile(media.file_location, false) { bitmap ->
                                 media.photoFile = bitmap
-                                if (i == mediaList.size - 1) callback(mediaList)
+                                //if (i == mediaList.size - 1)
+                                    callback(mediaList)
                             }
                         }
                     }

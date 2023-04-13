@@ -8,12 +8,9 @@ import androidx.recyclerview.widget.ListAdapter
 import ru.spiridonov.gallery.R
 import ru.spiridonov.gallery.databinding.EachMediaItemBinding
 import ru.spiridonov.gallery.domain.entity.Media
-import ru.spiridonov.gallery.domain.usecases.media_usecases.DownloadFileUseCase
 import javax.inject.Inject
 
-class MediaItemAdapter @Inject constructor(
-    private val downloadFileUseCase: DownloadFileUseCase
-) :
+class MediaItemAdapter @Inject constructor() :
     ListAdapter<Media, MediaItemViewHolder>(MediaItemDiffCallback) {
     var onItemClickListener: ((Media) -> Unit)? = null
 
