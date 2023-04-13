@@ -1,5 +1,7 @@
 package ru.spiridonov.gallery.domain.entity
 
+import android.graphics.Bitmap
+
 data class Media(
     val media_id: String,
     val album_id: String,
@@ -11,5 +13,6 @@ data class Media(
     val camera_info: String,
     val original_name: String,
     val is_favourite: Boolean,
-    val is_deleted: Boolean
+    val is_deleted: Boolean,
+    var photoFile: Bitmap? = null
 )

@@ -31,7 +31,15 @@ class MediaRepositoryImpl @Inject constructor(
                 val token = "Bearer " + sharedPref.getUser().accessToken
                 apiService.getMediaFromAlbum(path = albumName, token = token).also { response ->
                     response.body()?.let { mediaJsonContainer ->
-                        callback(dtoMapper.mapMediaJsonContainerToMedia(mediaJsonContainer))
+                        val mediaList = dtoMapper.mapMediaJsonContainerToMedia(mediaJsonContainer)
+                            .toMutableList()
+                        for (i in mediaList.indices) {
+                            val media = mediaList[i]
+                            downloadFile(media.file_location, false) { bitmap ->
+                                media.photoFile = bitmap
+                                if (i == mediaList.size - 1) callback(mediaList)
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {

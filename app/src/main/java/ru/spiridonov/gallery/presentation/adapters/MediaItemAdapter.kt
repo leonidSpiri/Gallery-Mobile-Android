@@ -1,14 +1,10 @@
 package ru.spiridonov.gallery.presentation.adapters
 
-import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ru.spiridonov.gallery.R
 import ru.spiridonov.gallery.databinding.EachMediaItemBinding
 import ru.spiridonov.gallery.domain.entity.Media
@@ -46,17 +42,17 @@ class MediaItemAdapter @Inject constructor(
             when (this) {
                 is EachMediaItemBinding -> {
                     mediaItem = item
-
-                    val mediaPath = item.file_location
-                    CoroutineScope(Dispatchers.IO).launch {
-                        downloadFileUseCase.invoke(mediaPath, false) {
-                            it?.let {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    imageView.setImageBitmap(it)
-                                }
-                            }
-                        }
-                    }
+                    imageView.setImageBitmap(item.photoFile)
+                    /* val mediaPath = item.file_location
+                     CoroutineScope(Dispatchers.IO).launch {
+                         downloadFileUseCase.invoke(mediaPath, false) {
+                             it?.let {
+                                 CoroutineScope(Dispatchers.Main).launch {
+                                     imageView.setImageBitmap(it)
+                                 }
+                             }
+                         }
+                     }*/
                 }
             }
             root.setOnClickListener {
