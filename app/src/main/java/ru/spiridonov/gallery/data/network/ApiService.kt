@@ -1,12 +1,11 @@
 package ru.spiridonov.gallery.data.network
 
-import android.graphics.Bitmap
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
+import ru.spiridonov.gallery.data.network.model.DownloadPhotoResponseModel
 import ru.spiridonov.gallery.data.network.model.MediaListResponseModel
 import ru.spiridonov.gallery.data.network.model.UserResponseModel
-import java.io.File
 
 interface ApiService {
 
@@ -26,10 +25,10 @@ interface ApiService {
         @Path(value = "path") path: String
     ): Response<MediaListResponseModel>
 
-    @GET("media/download_media/{path}")
+    @GET("media/download_media/{path}/base")
     suspend fun downloadMedia(
         @Header("Authorization") token: String,
         @Path(value = "path") path: String,
         @Query("fileName") fileName: String
-    ): String
+    ): Response<DownloadPhotoResponseModel>
 }
