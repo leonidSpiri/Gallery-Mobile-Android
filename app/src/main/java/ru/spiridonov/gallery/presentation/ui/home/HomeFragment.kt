@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentHomeBinding
 import ru.spiridonov.gallery.presentation.adapters.MediaItemAdapter
-import ru.spiridonov.gallery.presentation.ui.fullscreen.FullScreenViewModel
 import ru.spiridonov.gallery.presentation.ui.fullscreen.FullscreenActivity
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
@@ -73,7 +72,7 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView() {
         binding.rvMediaList.adapter = mediaItemAdapter
         mediaItemAdapter.onItemClickListener = {
-            val intent = FullscreenActivity.newIntentImage(requireContext(), it)
+            val intent = FullscreenActivity.newIntentImage(requireContext(), it.media_id)
             startActivity(intent)
         }
     }

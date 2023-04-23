@@ -13,8 +13,9 @@ data class Media(
     val date_created: Long,
     val geo_location: String,
     val camera_info: String,
-    val original_name: String,
+    var original_name: String,
     val is_favourite: Boolean,
     val is_deleted: Boolean,
-    var photoFile: Bitmap? = null
-): Parcelable
+    var photoFile: Bitmap? = null,
+    var isInGoodQuality: Boolean = false
+) : Parcelable

@@ -8,6 +8,7 @@ import ru.spiridonov.gallery.data.network.ApiService
 import ru.spiridonov.gallery.data.repository.AlbumRepositoryImpl
 import ru.spiridonov.gallery.data.repository.MediaRepositoryImpl
 import ru.spiridonov.gallery.data.repository.UserRepositoryImpl
+import ru.spiridonov.gallery.data.storage.MediaStorage
 import ru.spiridonov.gallery.domain.repository.AlbumRepository
 import ru.spiridonov.gallery.domain.repository.MediaRepository
 import ru.spiridonov.gallery.domain.repository.UserRepository
@@ -33,6 +34,12 @@ interface DataModule {
         @ApplicationScope
         fun provideApiService(): ApiService {
             return ApiFactory.apiService
+        }
+
+        @Provides
+        @ApplicationScope
+        fun provideMediaStorage(): MediaStorage {
+            return MediaStorage
         }
 
     }

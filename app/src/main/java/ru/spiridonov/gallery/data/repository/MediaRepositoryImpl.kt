@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.spiridonov.gallery.data.mapper.DtoMapper
 import ru.spiridonov.gallery.data.network.ApiService
+import ru.spiridonov.gallery.data.storage.MediaStorage
 import ru.spiridonov.gallery.domain.entity.Media
 import ru.spiridonov.gallery.domain.repository.MediaRepository
 import ru.spiridonov.gallery.utils.SharedPref
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class MediaRepositoryImpl @Inject constructor(
     private val sharedPref: SharedPref,
     private val apiService: ApiService,
+    private val mediaStorage: MediaStorage,
     private val dtoMapper: DtoMapper
 ) : MediaRepository {
     override suspend fun getMediaFromAlbum(albumName: String, callback: (List<Media>) -> Unit) {
@@ -33,6 +35,7 @@ class MediaRepositoryImpl @Inject constructor(
                             val media = mediaList[i]
                             downloadFile(media.file_location, false) { bitmap ->
                                 media.photoFile = bitmap
+                                mediaStorage.addMedia(media)
                                 callback(mediaList)
                             }
                         }
