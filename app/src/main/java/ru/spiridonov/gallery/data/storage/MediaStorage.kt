@@ -8,8 +8,10 @@ object MediaStorage {
     fun addMedia(media: Media) =
         mediaList.add(media)
 
-    fun replaceMedia(media: Media, id: Int) =
-        mediaList.set(id, media)
+    fun updateMedia(media: Media) {
+        val index = mediaList.indexOfFirst { it.media_id == media.media_id }
+        mediaList[index] = media
+    }
 
     fun replaceMediaList(list: List<Media>) {
         mediaList = list.toMutableList()
