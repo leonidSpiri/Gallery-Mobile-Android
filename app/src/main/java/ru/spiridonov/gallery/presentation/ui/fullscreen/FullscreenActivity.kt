@@ -2,14 +2,11 @@ package ru.spiridonov.gallery.presentation.ui.fullscreen
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityFullscreenBinding
-import ru.spiridonov.gallery.domain.entity.Media
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
@@ -38,7 +35,7 @@ class FullscreenActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         viewModel.media.observe(this) {
-            Toast.makeText(this, it.original_name, Toast.LENGTH_SHORT).show()
+            binding.media = it
             binding.fullImage.setImageBitmap(it.photoFile)
         }
     }

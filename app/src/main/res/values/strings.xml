@@ -12,4 +12,9 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="bottom_sheet_peek">О фотографии</string>
+    <string name="name">Название: %s</string>
+    <string name="location">Местоположение: %s</string>
+    <string name="date">Дата создания: %s</string>
+    <string name="camera_info">Камера: %s</string>
 </resources>
