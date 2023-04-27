@@ -17,4 +17,8 @@
     <string name="location">Местоположение: %s</string>
     <string name="date">Дата создания: %s</string>
     <string name="camera_info">Камера: %s</string>
+    <string name="add">Загрузить</string>
+    <string name="make_photo">Сделать фото</string>
+    <string name="get_from_gallery">Загрузить из галереи</string>
+    <string name="save_photo">Сохранить фото</string>
 </resources>

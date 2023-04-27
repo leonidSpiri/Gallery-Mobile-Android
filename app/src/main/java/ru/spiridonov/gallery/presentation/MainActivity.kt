@@ -1,19 +1,20 @@
 package ru.spiridonov.gallery.presentation
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.R
 import ru.spiridonov.gallery.databinding.ActivityMainBinding
 import ru.spiridonov.gallery.presentation.account.LoginActivity
+import ru.spiridonov.gallery.presentation.add_media.AddMediaActivity
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
@@ -63,5 +64,21 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.item_add -> {
+                startActivity(AddMediaActivity.newIntent(this))
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true
     }
 }

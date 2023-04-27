@@ -5,6 +5,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import ru.spiridonov.gallery.presentation.account.AccountViewModel
+import ru.spiridonov.gallery.presentation.add_media.AddMediaViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardViewModel
 import ru.spiridonov.gallery.presentation.ui.fullscreen.FullScreenViewModel
@@ -43,4 +44,9 @@ interface ViewModelModule {
     @IntoMap
     @ViewModelKey(FullScreenViewModel::class)
     fun bindFullScreenViewModel(viewModel: FullScreenViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AddMediaViewModel::class)
+    fun bindAddMediaViewModel(viewModel: AddMediaViewModel): ViewModel
 }
