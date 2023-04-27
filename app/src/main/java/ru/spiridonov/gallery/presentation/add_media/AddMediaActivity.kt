@@ -1,22 +1,32 @@
 package ru.spiridonov.gallery.presentation.add_media
 
-import android.Manifest
+import android.app.Activity
+import android.app.ProgressDialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
-import androidx.appcompat.app.AlertDialog
+import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
+import ru.spiridonov.gallery.utils.CheckPermToAddMedia
+import ru.spiridonov.gallery.utils.ShowAlert
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 class AddMediaActivity : AppCompatActivity() {
@@ -32,7 +42,15 @@ class AddMediaActivity : AppCompatActivity() {
     private lateinit var viewModel: AddMediaViewModel
 
 
+    private lateinit var pDialog: ProgressDialog
+
+    @get:Inject
+    val checkPermToAddMedia by lazy { CheckPermToAddMedia(this) }
+
     private var locationManager: LocationManager? = null
+
+    private var imageUri: Uri? = null
+    private var imageName = ""
 
     private val locationListener: LocationListener = LocationListener { location ->
         Log.d(
@@ -42,7 +60,7 @@ class AddMediaActivity : AppCompatActivity() {
         myLocation = location
     }
 
-   private lateinit var myLocation: Location
+    private lateinit var myLocation: Location
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,9 +69,89 @@ class AddMediaActivity : AppCompatActivity() {
         binding = ActivityAddMediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this, viewModelFactory)[AddMediaViewModel::class.java]
-        checkLocation()
-        // if(::myLocation.isInitialized)
+        if (checkPermToAddMedia.checkPermissions())
+            startLocationService()
+        handlerClickListener()
     }
+
+    private fun handlerClickListener() {
+        binding.btnCamera.setOnClickListener {
+            if (!checkPermToAddMedia.checkPermissions()) return@setOnClickListener
+            imageUri = null
+            binding.imgPhoto.setImageDrawable(null)
+            imageUri = openCameraInterface()
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            resultTakePhoto.launch(intent)
+        }
+
+        binding.btnGallery.setOnClickListener {
+            if (!checkPermToAddMedia.checkPermissions()) return@setOnClickListener
+            imageUri = null
+            binding.imgPhoto.setImageDrawable(null)
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            resultTakePhoto.launch(intent)
+        }
+
+        binding.btnSave.setOnClickListener {
+            if (imageUri == null) {
+                ShowAlert(this, "Выберите фото")
+                return@setOnClickListener
+            }
+
+            pDialog = ProgressDialog(this)
+            pDialog.setMessage("Загрузка...")
+            pDialog.show()
+
+            val iikBitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(imageUri!!))
+            viewModel.uploadPhoto(
+                iikBitmap,
+                if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
+            )
+        }
+    }
+
+    private fun openCameraInterface(): Uri? {
+        imageName = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+            .format(System.currentTimeMillis())
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P)
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Gallery")
+        }
+        return contentResolver?.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+    }
+
+    private var resultTakePhoto =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                try {
+                    if (imageUri?.path == null)
+                        imageUri = result.data?.data
+                    var ivkeBitmap = BitmapFactory.decodeStream(
+                        contentResolver.openInputStream(imageUri!!)
+                    )
+                    ivkeBitmap = viewModel.getResizedBitmap(ivkeBitmap)
+                    binding.imgPhoto.setImageBitmap(ivkeBitmap)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(
+                        this,
+                        "Ошибка. Воспользуйтесь камерой",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                ShowAlert(this, "Ошибка при выборе фото")
+                imageUri = null
+            }
+        }
+
 
     private fun startLocationService() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
@@ -78,37 +176,6 @@ class AddMediaActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-            showAlertLocation()
-        startLocationService()
-    }
-
-    private fun showAlertLocation() {
-        val dialog = AlertDialog.Builder(this)
-        dialog.setMessage("Your location settings is set to Off, Please enable location to use this application")
-        dialog.setPositiveButton("Settings") { _, _ ->
-            requestLocationPermission()
-        }
-        dialog.setNegativeButton("Cancel") { _, _ ->
-        }
-        dialog.setCancelable(false)
-        dialog.show()
-    }
-
-    private fun requestLocationPermission() =
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-            ),
-            MY_PERMISSIONS_REQUEST_LOCATION
-        )
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -121,10 +188,9 @@ class AddMediaActivity : AppCompatActivity() {
     }
 
     companion object {
+        private const val FILENAME_FORMAT = "_yyyyMMdd_HHmmss"
+        const val MY_PERMISSIONS_REQUEST_LOCATION = 1
+        const val MY_PERMISSIONS_REQUEST_CAMERA = 2
         fun newIntent(context: Context) = Intent(context, AddMediaActivity::class.java)
-
-        private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
-
-
     }
 }
