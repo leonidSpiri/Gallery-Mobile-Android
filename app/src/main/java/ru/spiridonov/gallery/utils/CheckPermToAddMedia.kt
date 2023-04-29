@@ -2,6 +2,7 @@ package ru.spiridonov.gallery.utils
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.ActivityCompat
 import ru.spiridonov.gallery.presentation.add_media.AddMediaActivity
 import javax.inject.Inject
@@ -21,6 +22,22 @@ class CheckPermToAddMedia @Inject constructor(private val activity: AddMediaActi
             ) != PackageManager.PERMISSION_GRANTED
         )
             requestCameraPermission()
+
+        if (ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        )
+            requestWritePermission()
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P)
+            if (ActivityCompat.checkSelfPermission(
+                    activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            )
+                requestWritePermission()
+
         return true
     }
 
@@ -39,5 +56,18 @@ class CheckPermToAddMedia @Inject constructor(private val activity: AddMediaActi
                 Manifest.permission.ACCESS_FINE_LOCATION,
             ),
             AddMediaActivity.MY_PERMISSIONS_REQUEST_LOCATION
+        )
+
+    private fun requestWritePermission() =
+        ActivityCompat.requestPermissions(
+            activity,
+            mutableListOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ).apply {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                    add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+            }.toTypedArray(),
+            AddMediaActivity.MY_PERMISSIONS_REQUEST_WRITE
         )
 }

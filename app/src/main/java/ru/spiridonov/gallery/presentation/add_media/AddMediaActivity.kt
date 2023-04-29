@@ -1,25 +1,29 @@
 package ru.spiridonov.gallery.presentation.add_media
 
+
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.loader.content.CursorLoader
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
@@ -28,6 +32,7 @@ import ru.spiridonov.gallery.utils.ShowAlert
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
+
 
 class AddMediaActivity : AppCompatActivity() {
 
@@ -133,11 +138,16 @@ class AddMediaActivity : AppCompatActivity() {
                 try {
                     if (imageUri?.path == null)
                         imageUri = result.data?.data
-                    var ivkeBitmap = BitmapFactory.decodeStream(
+                    var bitmap = BitmapFactory.decodeStream(
                         contentResolver.openInputStream(imageUri!!)
                     )
-                    ivkeBitmap = viewModel.getResizedBitmap(ivkeBitmap)
-                    binding.imgPhoto.setImageBitmap(ivkeBitmap)
+                    imageUri?.let {
+                        bitmap = viewModel.rotateImage(bitmap, it) ?: bitmap
+                    }
+                    bitmap = viewModel.getResizedBitmap(bitmap) ?: bitmap
+                    binding.imgPhoto.setImageBitmap(bitmap)
+                    //val info = showExif(exif)
+                    //Log.d("info", info)
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Toast.makeText(
@@ -152,6 +162,28 @@ class AddMediaActivity : AppCompatActivity() {
             }
         }
 
+
+    private fun showExif(exif: ExifInterface): String {
+        var myAttribute: String? = "Exif information ---\n"
+        myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
+        myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
+        myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
+        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)
+        return myAttribute.toString()
+    }
+
+    private fun getTagString(tag: String, exif: ExifInterface): String {
+        return """$tag : ${exif.getAttribute(tag)}
+"""
+    }
 
     private fun startLocationService() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
@@ -191,6 +223,7 @@ class AddMediaActivity : AppCompatActivity() {
         private const val FILENAME_FORMAT = "_yyyyMMdd_HHmmss"
         const val MY_PERMISSIONS_REQUEST_LOCATION = 1
         const val MY_PERMISSIONS_REQUEST_CAMERA = 2
+        const val MY_PERMISSIONS_REQUEST_WRITE = 3
         fun newIntent(context: Context) = Intent(context, AddMediaActivity::class.java)
     }
 }

@@ -8,7 +8,8 @@ import java.util.concurrent.TimeUnit
 
 
 object ApiFactory {
-    const val BASE_URL = "http://192.168.1.144:3000/"
+    //const val BASE_URL = "http://192.168.1.144:3000/"
+    const val BASE_URL = "http://192.158.1.71:3000/"
 
     private val json = GsonBuilder()
         .setLenient()
