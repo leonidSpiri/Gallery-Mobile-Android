@@ -9,7 +9,7 @@ interface MediaRepository {
 
     suspend fun getMedia(id: String, callback: (Media?) -> Unit)
 
-    suspend fun createMedia(media: Media, file: File, callback: (Boolean) -> Unit)
+    suspend fun createPhotoMedia(photo: File, location: String?, callback: (Boolean) -> Unit)
 
     suspend fun updateMedia(media: Media, callback: (Media?) -> Unit)
 

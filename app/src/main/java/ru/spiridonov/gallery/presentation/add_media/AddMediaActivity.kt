@@ -9,11 +9,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
-import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -23,12 +21,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.loader.content.CursorLoader
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import ru.spiridonov.gallery.utils.CheckPermToAddMedia
 import ru.spiridonov.gallery.utils.ShowAlert
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -55,7 +53,7 @@ class AddMediaActivity : AppCompatActivity() {
     private var locationManager: LocationManager? = null
 
     private var imageUri: Uri? = null
-    private var imageName = ""
+    private var fullBitmap: Bitmap? = null
 
     private val locationListener: LocationListener = LocationListener { location ->
         Log.d(
@@ -66,7 +64,6 @@ class AddMediaActivity : AppCompatActivity() {
     }
 
     private lateinit var myLocation: Location
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
@@ -95,6 +92,7 @@ class AddMediaActivity : AppCompatActivity() {
             imageUri = null
             binding.imgPhoto.setImageDrawable(null)
             val intent = Intent(Intent.ACTION_PICK)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.type = "image/*"
             resultTakePhoto.launch(intent)
         }
@@ -109,16 +107,22 @@ class AddMediaActivity : AppCompatActivity() {
             pDialog.setMessage("Загрузка...")
             pDialog.show()
 
-            val iikBitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(imageUri!!))
-            viewModel.uploadPhoto(
-                iikBitmap,
-                if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
-            )
+           // fullBitmap?.let {bitmap ->
+
+                val file = File(viewModel.getPath(imageUri!!)!!)
+                Log.d("myTag", "file size: ${file.length()}")
+                Log.d("myTag", file.name)
+
+                viewModel.uploadPhoto(
+                    file,
+                    if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
+                )
+           // }
         }
     }
 
     private fun openCameraInterface(): Uri? {
-        imageName = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
+        val imageName = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
             .format(System.currentTimeMillis())
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, imageName)
@@ -138,16 +142,16 @@ class AddMediaActivity : AppCompatActivity() {
                 try {
                     if (imageUri?.path == null)
                         imageUri = result.data?.data
-                    var bitmap = BitmapFactory.decodeStream(
-                        contentResolver.openInputStream(imageUri!!)
-                    )
-                    imageUri?.let {
-                        bitmap = viewModel.rotateImage(bitmap, it) ?: bitmap
+                    imageUri?.let {uri ->
+                        var bitmap = BitmapFactory.decodeStream(
+                            contentResolver.openInputStream(uri)
+                        )
+                        bitmap = viewModel.rotateImage(bitmap, uri) ?: bitmap
+                        fullBitmap = bitmap
+                        bitmap = viewModel.getResizedBitmap(bitmap) ?: bitmap
+                        binding.imgPhoto.setImageBitmap(bitmap)
                     }
-                    bitmap = viewModel.getResizedBitmap(bitmap) ?: bitmap
-                    binding.imgPhoto.setImageBitmap(bitmap)
-                    //val info = showExif(exif)
-                    //Log.d("info", info)
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                     Toast.makeText(
@@ -161,29 +165,6 @@ class AddMediaActivity : AppCompatActivity() {
                 imageUri = null
             }
         }
-
-
-    private fun showExif(exif: ExifInterface): String {
-        var myAttribute: String? = "Exif information ---\n"
-        myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
-        myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif)
-        myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif)
-        myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
-        myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
-        myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
-        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)
-        return myAttribute.toString()
-    }
-
-    private fun getTagString(tag: String, exif: ExifInterface): String {
-        return """$tag : ${exif.getAttribute(tag)}
-"""
-    }
 
     private fun startLocationService() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?

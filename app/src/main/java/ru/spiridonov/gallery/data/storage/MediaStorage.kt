@@ -6,7 +6,7 @@ object MediaStorage {
     private var mediaList = mutableListOf<Media>()
 
     fun addMedia(media: Media) =
-        mediaList.add(media)
+        mediaList.add(0, media)
 
     fun updateMedia(media: Media) {
         val index = mediaList.indexOfFirst { it.media_id == media.media_id }

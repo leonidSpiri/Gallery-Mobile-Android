@@ -3,16 +3,20 @@ package ru.spiridonov.gallery.presentation.add_media
 import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.Matrix
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import android.provider.MediaStore
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.loader.content.CursorLoader
-import java.lang.reflect.Executable
+import kotlinx.coroutines.launch
+import ru.spiridonov.gallery.domain.usecases.media_usecases.CreatePhotoMediaUseCase
+import java.io.File
 import javax.inject.Inject
 
 class AddMediaViewModel @Inject constructor(
-    private val application: Application
+    private val application: Application,
+    private val createPhotoMediaUseCase: CreatePhotoMediaUseCase
 ) : ViewModel() {
 
     fun getResizedBitmap(image: Bitmap, maxSize: Int = 1024): Bitmap? {
@@ -58,11 +62,14 @@ class AddMediaViewModel @Inject constructor(
         }
 
 
-    fun uploadPhoto(bitmap: Bitmap, location: String) {
+    fun uploadPhoto(photo: File, location: String) =
+        viewModelScope.launch {
+            createPhotoMediaUseCase.invoke(photo, location) {
 
-    }
+            }
+        }
 
-    private fun getPath(uri: Uri): String? {
+    fun getPath(uri: Uri): String? {
         val data = arrayOf(MediaStore.Images.Media.DATA)
         val loader = CursorLoader(application, uri, data, null, null, null)
         val cursor = loader.loadInBackground()
@@ -81,4 +88,26 @@ class AddMediaViewModel @Inject constructor(
             ExifInterface.ORIENTATION_ROTATE_270 -> 270
             else -> 0
         }
+
+    private fun showExif(exif: ExifInterface): String {
+        var myAttribute: String? = "Exif information ---\n"
+        myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
+        myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LATITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_GPS_LONGITUDE_REF, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_LENGTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_IMAGE_WIDTH, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MAKE, exif)
+        myAttribute += getTagString(ExifInterface.TAG_MODEL, exif)
+        myAttribute += getTagString(ExifInterface.TAG_ORIENTATION, exif)
+        myAttribute += getTagString(ExifInterface.TAG_WHITE_BALANCE, exif)
+        return myAttribute.toString()
+    }
+
+    private fun getTagString(tag: String, exif: ExifInterface): String {
+        return """$tag : ${exif.getAttribute(tag)}
+"""
+    }
 }
