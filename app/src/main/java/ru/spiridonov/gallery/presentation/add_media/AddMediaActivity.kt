@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -25,6 +24,7 @@ import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import ru.spiridonov.gallery.utils.CheckPermToAddMedia
+import ru.spiridonov.gallery.utils.FileUtils
 import ru.spiridonov.gallery.utils.ShowAlert
 import java.io.File
 import java.text.SimpleDateFormat
@@ -107,17 +107,15 @@ class AddMediaActivity : AppCompatActivity() {
             pDialog.setMessage("Загрузка...")
             pDialog.show()
 
-           // fullBitmap?.let {bitmap ->
 
-                val file = File(viewModel.getPath(imageUri!!)!!)
-                Log.d("myTag", "file size: ${file.length()}")
-                Log.d("myTag", file.name)
+            val file = File(FileUtils.getPath(this, imageUri!!)!!)
+            Log.d("myTag", "file size: ${file.length()}")
+            Log.d("myTag", file.name)
 
-                viewModel.uploadPhoto(
-                    file,
-                    if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
-                )
-           // }
+            viewModel.uploadPhoto(
+                file,
+                if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
+            )
         }
     }
 
@@ -142,14 +140,9 @@ class AddMediaActivity : AppCompatActivity() {
                 try {
                     if (imageUri?.path == null)
                         imageUri = result.data?.data
-                    imageUri?.let {uri ->
-                        var bitmap = BitmapFactory.decodeStream(
-                            contentResolver.openInputStream(uri)
-                        )
-                        bitmap = viewModel.rotateImage(bitmap, uri) ?: bitmap
-                        fullBitmap = bitmap
-                        bitmap = viewModel.getResizedBitmap(bitmap) ?: bitmap
-                        binding.imgPhoto.setImageBitmap(bitmap)
+                    imageUri?.let { uri ->
+                        fullBitmap = viewModel.createBitmapFromUri(this, uri)
+                        binding.imgPhoto.setImageBitmap(fullBitmap)
                     }
 
                 } catch (e: Exception) {

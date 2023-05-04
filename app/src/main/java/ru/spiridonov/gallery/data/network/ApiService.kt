@@ -36,9 +36,16 @@ interface ApiService {
     ): Response<MediaListResponseModel>
 
     @GET("media/download_media/{path}/base")
-    suspend fun downloadMedia(
+    suspend fun downloadMediaBase64(
         @Header("Authorization") token: String,
         @Path(value = "path") path: String,
         @Query("fileName") fileName: String
     ): Response<DownloadPhotoResponseModel>
+
+    @GET("media/download_media/{path}/file")
+    suspend fun downloadMediaFile(
+        @Header("Authorization") token: String,
+        @Path(value = "path") path: String,
+        @Query("fileName") fileName: String
+    ): ResponseBody
 }
