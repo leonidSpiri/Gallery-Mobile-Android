@@ -10,13 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.Response
 import ru.spiridonov.gallery.data.mapper.DtoMapper
-import ru.spiridonov.gallery.data.network.ApiFactory
 import ru.spiridonov.gallery.data.network.ApiService
 import ru.spiridonov.gallery.data.storage.MediaStorage
 import ru.spiridonov.gallery.domain.entity.Media
@@ -25,7 +21,6 @@ import ru.spiridonov.gallery.utils.FileUtils
 import ru.spiridonov.gallery.utils.ImageUtils
 import ru.spiridonov.gallery.utils.SharedPref
 import java.io.File
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -112,12 +107,11 @@ class MediaRepositoryImpl @Inject constructor(
                     var bitmap = BitmapFactory.decodeFile(createdFile.absolutePath)
                     bitmap = ImageUtils.rotateImage(bitmap, createdFile.path)
                     callback(bitmap)
-                    Log.d("downloadFile", "file from cache. skip download")
                     return@launch
                 }
 
                 val token = "Bearer " + sharedPref.getUser().accessToken
-                if (fullSize) {
+                if (fullSize)
                     apiService.downloadMediaFile(
                         token = token,
                         path = "full",
@@ -138,7 +132,7 @@ class MediaRepositoryImpl @Inject constructor(
                                 }
                             }
                         }
-                } else {
+                else
                     apiService.downloadMediaBase64(
                         token = token,
                         path = "thumbnail",
@@ -158,8 +152,6 @@ class MediaRepositoryImpl @Inject constructor(
                                 }
                             }
                         }
-
-                }
             } catch (e: Exception) {
                 Log.d("downloadMedia", e.toString())
             }

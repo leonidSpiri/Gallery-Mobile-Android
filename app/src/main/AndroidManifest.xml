@@ -31,17 +31,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.add_media.AddMediaActivity"
+            android:name=".presentation.activity.add_media.AddMediaActivity"
             android:exported="false"
             android:theme="@style/Theme.MaterialComponents.NoActionBar" />
         <activity
-            android:name=".presentation.ui.fullscreen.FullscreenActivity"
+            android:name=".presentation.activity.fullscreen.FullscreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="false"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/Theme.MaterialComponents.NoActionBar" />
         <activity
-            android:name=".presentation.account.LoginActivity"
+            android:name=".presentation.activity.account.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.MainActivity"

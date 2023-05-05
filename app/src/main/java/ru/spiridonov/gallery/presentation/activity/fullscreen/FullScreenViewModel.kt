@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.ui.fullscreen
+package ru.spiridonov.gallery.presentation.activity.fullscreen
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

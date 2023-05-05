@@ -13,8 +13,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.R
 import ru.spiridonov.gallery.databinding.ActivityMainBinding
-import ru.spiridonov.gallery.presentation.account.LoginActivity
-import ru.spiridonov.gallery.presentation.add_media.AddMediaActivity
+import ru.spiridonov.gallery.presentation.activity.account.LoginActivity
+import ru.spiridonov.gallery.presentation.activity.add_media.AddMediaActivity
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject

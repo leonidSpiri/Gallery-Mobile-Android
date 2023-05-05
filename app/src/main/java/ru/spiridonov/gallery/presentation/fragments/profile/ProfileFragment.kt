@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.ui.profile
+package ru.spiridonov.gallery.presentation.fragments.profile
 
 import android.content.Context
 import android.os.Bundle

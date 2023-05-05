@@ -5,12 +5,12 @@ import dagger.BindsInstance
 import dagger.Component
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.presentation.MainActivity
-import ru.spiridonov.gallery.presentation.account.LoginActivity
-import ru.spiridonov.gallery.presentation.add_media.AddMediaActivity
-import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardFragment
-import ru.spiridonov.gallery.presentation.ui.fullscreen.FullscreenActivity
-import ru.spiridonov.gallery.presentation.ui.home.HomeFragment
-import ru.spiridonov.gallery.presentation.ui.profile.ProfileFragment
+import ru.spiridonov.gallery.presentation.activity.account.LoginActivity
+import ru.spiridonov.gallery.presentation.activity.add_media.AddMediaActivity
+import ru.spiridonov.gallery.presentation.fragments.dashboard.DashboardFragment
+import ru.spiridonov.gallery.presentation.activity.fullscreen.FullscreenActivity
+import ru.spiridonov.gallery.presentation.fragments.home.HomeFragment
+import ru.spiridonov.gallery.presentation.fragments.profile.ProfileFragment
 
 
 @ApplicationScope

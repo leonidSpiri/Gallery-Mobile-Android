@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.spiridonov.gallery.presentation.account.AccountViewModel
-import ru.spiridonov.gallery.presentation.add_media.AddMediaViewModel
+import ru.spiridonov.gallery.presentation.activity.account.AccountViewModel
+import ru.spiridonov.gallery.presentation.activity.add_media.AddMediaViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
-import ru.spiridonov.gallery.presentation.ui.dashboard.DashboardViewModel
-import ru.spiridonov.gallery.presentation.ui.fullscreen.FullScreenViewModel
-import ru.spiridonov.gallery.presentation.ui.home.HomeViewModel
-import ru.spiridonov.gallery.presentation.ui.profile.ProfileViewModel
+import ru.spiridonov.gallery.presentation.fragments.dashboard.DashboardViewModel
+import ru.spiridonov.gallery.presentation.activity.fullscreen.FullScreenViewModel
+import ru.spiridonov.gallery.presentation.fragments.home.HomeViewModel
+import ru.spiridonov.gallery.presentation.fragments.profile.ProfileViewModel
 
 @Module
 interface ViewModelModule {

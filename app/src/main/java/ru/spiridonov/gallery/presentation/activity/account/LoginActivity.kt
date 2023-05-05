@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.account
+package ru.spiridonov.gallery.presentation.activity.account
 
 import android.content.Context
 import android.content.Intent

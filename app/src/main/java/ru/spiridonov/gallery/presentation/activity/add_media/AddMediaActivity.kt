@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.add_media
+package ru.spiridonov.gallery.presentation.activity.add_media
 
 
 import android.app.Activity
@@ -107,15 +107,11 @@ class AddMediaActivity : AppCompatActivity() {
             pDialog.setMessage("Загрузка...")
             pDialog.show()
 
-
-            val file = File(FileUtils.getPath(this, imageUri!!)!!)
-            Log.d("myTag", "file size: ${file.length()}")
-            Log.d("myTag", file.name)
-
-            viewModel.uploadPhoto(
-                file,
-                if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
-            )
+            if (imageUri != null)
+                viewModel.uploadPhoto(
+                    this, imageUri!!,
+                    if (::myLocation.isInitialized) "${myLocation.latitude} ${myLocation.longitude}" else ""
+                )
         }
     }
 

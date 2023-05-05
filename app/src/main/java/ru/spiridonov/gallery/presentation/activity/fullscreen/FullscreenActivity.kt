@@ -1,27 +1,13 @@
-package ru.spiridonov.gallery.presentation.ui.fullscreen
+package ru.spiridonov.gallery.presentation.activity.fullscreen
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Matrix
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.ViewModelProvider
-import androidx.loader.content.CursorLoader
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityFullscreenBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 

@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.ui.home
+package ru.spiridonov.gallery.presentation.fragments.home
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentHomeBinding
 import ru.spiridonov.gallery.presentation.adapters.MediaItemAdapter
-import ru.spiridonov.gallery.presentation.ui.fullscreen.FullscreenActivity
+import ru.spiridonov.gallery.presentation.activity.fullscreen.FullscreenActivity
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 

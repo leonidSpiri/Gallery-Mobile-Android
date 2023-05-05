@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.ui.home
+package ru.spiridonov.gallery.presentation.fragments.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

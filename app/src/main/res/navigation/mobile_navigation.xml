@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="ru.spiridonov.gallery.presentation.ui.home.HomeFragment"
+        android:name="ru.spiridonov.gallery.presentation.fragments.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="ru.spiridonov.gallery.presentation.ui.dashboard.DashboardFragment"
+        android:name="ru.spiridonov.gallery.presentation.fragments.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="ru.spiridonov.gallery.presentation.ui.profile.ProfileFragment"
+        android:name="ru.spiridonov.gallery.presentation.fragments.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

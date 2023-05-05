@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:theme="@style/ThemeOverlay.Gallery.FullscreenContainer"
-        tools:context=".presentation.ui.fullscreen.FullscreenActivity">
+        tools:context=".presentation.activity.fullscreen.FullscreenActivity">
 
         <ImageView
             android:id="@+id/full_image"

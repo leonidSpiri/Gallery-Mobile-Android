@@ -4,7 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.ActivityCompat
-import ru.spiridonov.gallery.presentation.add_media.AddMediaActivity
+import ru.spiridonov.gallery.presentation.activity.add_media.AddMediaActivity
 import javax.inject.Inject
 
 class CheckPermToAddMedia @Inject constructor(private val activity: AddMediaActivity) {

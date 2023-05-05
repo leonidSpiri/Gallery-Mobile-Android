@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.ui.dashboard
+package ru.spiridonov.gallery.presentation.fragments.dashboard
 
 import android.content.Context
 import android.os.Bundle

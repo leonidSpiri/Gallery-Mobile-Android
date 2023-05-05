@@ -1,4 +1,4 @@
-package ru.spiridonov.gallery.presentation.add_media
+package ru.spiridonov.gallery.presentation.activity.add_media
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -28,10 +28,17 @@ class AddMediaViewModel @Inject constructor(
         return bitmap
     }
 
-    fun uploadPhoto(photo: File, location: String) =
-        viewModelScope.launch {
-            createPhotoMediaUseCase.invoke(photo, location) {
+    fun uploadPhoto(context: Context, imageUri: Uri, location: String) =
+        try {
+            FileUtils.getPath(context, imageUri)?.let { filePath ->
+                val file = File(filePath)
+                viewModelScope.launch {
+                    createPhotoMediaUseCase.invoke(file, location) {
 
+                    }
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 }
