@@ -17,6 +17,7 @@ import ru.spiridonov.gallery.presentation.activity.account.LoginActivity
 import ru.spiridonov.gallery.presentation.activity.add_media.AddMediaActivity
 import ru.spiridonov.gallery.presentation.viewmodels.MainViewModel
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
+import ru.spiridonov.gallery.utils.CheckPermToAddMedia
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: MainViewModel
 
+    @get:Inject
+    val checkPermToAddMedia by lazy { CheckPermToAddMedia(this) }
     override fun onCreate(savedInstanceState: Bundle?) {
         component.inject(this)
         super.onCreate(savedInstanceState)
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
         checkIfUserLoggedIn()
+        checkPermToAddMedia.checkPermissions()
     }
 
     override fun onResume() {

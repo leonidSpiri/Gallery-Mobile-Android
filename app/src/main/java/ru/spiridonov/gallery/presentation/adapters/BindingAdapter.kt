@@ -33,3 +33,8 @@ fun parseMediaDate(textView: TextView, date: Long?) {
 fun parseCameraInfo(textView: TextView, info: String?) {
     textView.text = String.format(textView.context.resources.getString(R.string.camera_info), info)
 }
+
+@BindingAdapter("welcomeUser")
+fun textWelcomeUser(textView: TextView, text: String?) {
+    textView.text = String.format(textView.context.resources.getString(R.string.welcome), text)
+}

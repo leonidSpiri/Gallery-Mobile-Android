@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -16,6 +18,11 @@ import javax.inject.Inject
 class AddMediaViewModel @Inject constructor(
     private val createPhotoMediaUseCase: CreatePhotoMediaUseCase
 ) : ViewModel() {
+
+    private val _wasMediaUpload = MutableLiveData<Boolean>()
+    val wasMediaUpload: LiveData<Boolean>
+        get() = _wasMediaUpload
+
 
     fun createBitmapFromUri(context: Context, uri: Uri): Bitmap? {
         var bitmap = BitmapFactory.decodeStream(
@@ -34,7 +41,7 @@ class AddMediaViewModel @Inject constructor(
                 val file = File(filePath)
                 viewModelScope.launch {
                     createPhotoMediaUseCase.invoke(file, location) {
-
+                        _wasMediaUpload.postValue(it)
                     }
                 }
             }

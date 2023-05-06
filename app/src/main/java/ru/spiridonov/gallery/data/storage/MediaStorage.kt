@@ -5,8 +5,10 @@ import ru.spiridonov.gallery.domain.entity.Media
 object MediaStorage {
     private var mediaList = mutableListOf<Media>()
 
-    fun addMedia(media: Media) =
-        mediaList.add(0, media)
+    fun addMedia(media: Media) {
+        mediaList.add(media)
+        mediaList.sortByDescending { it.date_created }
+    }
 
     fun updateMedia(media: Media) {
         val index = mediaList.indexOfFirst { it.media_id == media.media_id }

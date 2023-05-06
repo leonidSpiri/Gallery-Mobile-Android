@@ -1,6 +1,5 @@
 package ru.spiridonov.gallery.presentation.activity.add_media
 
-
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.ContentValues
@@ -24,9 +23,7 @@ import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import ru.spiridonov.gallery.utils.CheckPermToAddMedia
-import ru.spiridonov.gallery.utils.FileUtils
 import ru.spiridonov.gallery.utils.ShowAlert
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -74,6 +71,18 @@ class AddMediaActivity : AppCompatActivity() {
         if (checkPermToAddMedia.checkPermissions())
             startLocationService()
         handlerClickListener()
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        viewModel.wasMediaUpload.observe(this) {
+            pDialog.dismiss()
+            if (it) {
+                Toast.makeText(this, "Фото загружено", Toast.LENGTH_SHORT).show()
+                finish()
+            } else
+                Toast.makeText(this, "Ошибка загрузки", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun handlerClickListener() {

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.spiridonov.gallery.data.storage.MediaStorage
 import ru.spiridonov.gallery.domain.entity.Media
 import ru.spiridonov.gallery.domain.usecases.media_usecases.GetMediaFromAlbumUseCase
 import javax.inject.Inject
@@ -24,4 +25,10 @@ class HomeViewModel @Inject constructor(
                 }
             }
     }
+
+    fun updateMediaInfo() =
+        MediaStorage.getMediaList().also {
+            if (it != emptyList<Media>())
+                _media.value = it
+        }
 }

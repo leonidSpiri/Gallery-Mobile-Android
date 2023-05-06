@@ -3,6 +3,7 @@ package ru.spiridonov.gallery.presentation.fragments.home
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,12 +59,14 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.downloadAllMediaInfo()
+        viewModel.updateMediaInfo()
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun observeViewModel() {
+        viewModel.downloadAllMediaInfo()
         viewModel.media.observe(viewLifecycleOwner) {
+            Log.d("HomeFragment", "observeViewModel: $it")
             mediaItemAdapter.submitList(it)
             mediaItemAdapter.notifyDataSetChanged()
         }

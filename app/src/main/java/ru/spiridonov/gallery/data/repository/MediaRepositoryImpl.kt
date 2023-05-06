@@ -40,11 +40,13 @@ class MediaRepositoryImpl @Inject constructor(
                         val mediaList =
                             dtoMapper.mapMediaListJsonContainerToMedia(mediaJsonContainer)
                                 .toMutableList()
+                        //sort medialist by dateCreated
+                        mediaList.sortByDescending { it.date_created }
                         for (i in mediaList.indices) {
                             val media = mediaList[i]
                             downloadFile(media.file_location, false) { bitmap ->
                                 media.photoFile = bitmap
-                                mediaStorage.addMedia(media)
+                                mediaStorage.replaceMediaList(mediaList)
                                 callback(mediaList)
                             }
                         }
@@ -75,9 +77,14 @@ class MediaRepositoryImpl @Inject constructor(
                 apiService.uploadImage(token = token, file = body).also { response ->
                     response.body()?.let { mediaJson ->
                         val media = dtoMapper.mapMediaFileJsonContainerToMedia(mediaJson)
+                        var bitmap = BitmapFactory.decodeFile(photo.absolutePath)
+                        bitmap = ImageUtils.rotateImage(bitmap, photo.path) ?: bitmap
+                        media.photoFile = bitmap
+                        media.isInGoodQuality = true
                         mediaStorage.addMedia(media)
                         Log.d("createPhotoMedia", "success")
                         Log.d("createPhotoMedia", media.toString())
+                        photo.delete()
                         callback(true)
                     }
                 }

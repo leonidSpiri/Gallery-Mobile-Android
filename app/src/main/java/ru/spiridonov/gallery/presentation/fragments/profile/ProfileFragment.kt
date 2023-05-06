@@ -7,8 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.FragmentProfileBinding
+import ru.spiridonov.gallery.presentation.activity.account.LoginActivity
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
 import javax.inject.Inject
 
@@ -45,6 +47,15 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[ProfileViewModel::class.java]
         observeViewModel()
+        buttonClickListener()
+    }
+
+    private fun buttonClickListener() {
+        binding.btnLogout.setOnClickListener {
+            viewModel.logout()
+            findNavController().popBackStack()
+            requireActivity().startActivity(LoginActivity.newIntent(requireContext()))
+        }
     }
 
     override fun onResume() {
@@ -55,7 +66,7 @@ class ProfileFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.user.observe(viewLifecycleOwner) {
             if (it != null)
-                binding.textHome.text = it.toString()
+                binding.accountItem = it
         }
     }
 
