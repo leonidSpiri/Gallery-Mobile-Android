@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,6 +39,7 @@ class AddMediaViewModel @Inject constructor(
     fun uploadPhoto(context: Context, imageUri: Uri, location: String) =
         try {
             FileUtils.getPath(context, imageUri)?.let { filePath ->
+                Log.d("myTag", "filePath: $filePath")
                 val file = File(filePath)
                 viewModelScope.launch {
                     createPhotoMediaUseCase.invoke(file, location) {

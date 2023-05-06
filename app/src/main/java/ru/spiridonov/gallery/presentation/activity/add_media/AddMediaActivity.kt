@@ -53,10 +53,6 @@ class AddMediaActivity : AppCompatActivity() {
     private var fullBitmap: Bitmap? = null
 
     private val locationListener: LocationListener = LocationListener { location ->
-        Log.d(
-            "myTag",
-            "Location Changed, new location " + location.longitude + ":" + location.latitude
-        )
         myLocation = location
     }
 
@@ -102,7 +98,7 @@ class AddMediaActivity : AppCompatActivity() {
             binding.imgPhoto.setImageDrawable(null)
             val intent = Intent(Intent.ACTION_PICK)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.type = "image/*"
+            intent.type = "image/jpeg"
             resultTakePhoto.launch(intent)
         }
 
@@ -145,9 +141,17 @@ class AddMediaActivity : AppCompatActivity() {
                 try {
                     if (imageUri?.path == null)
                         imageUri = result.data?.data
-                    imageUri?.let { uri ->
-                        fullBitmap = viewModel.createBitmapFromUri(this, uri)
+                    if (imageUri != null) {
+                        fullBitmap = viewModel.createBitmapFromUri(this, imageUri!!)
                         binding.imgPhoto.setImageBitmap(fullBitmap)
+                    } else {
+                        pDialog.dismiss()
+                        Toast.makeText(
+                            this,
+                            "Ошибка. Воспользуйтесь камерой",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        imageUri = null
                     }
 
                 } catch (e: Exception) {

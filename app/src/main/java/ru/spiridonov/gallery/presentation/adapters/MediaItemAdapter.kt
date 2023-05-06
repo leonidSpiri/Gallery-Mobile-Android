@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import ru.spiridonov.gallery.R
 import ru.spiridonov.gallery.databinding.EachMediaItemBinding
 import ru.spiridonov.gallery.domain.entity.Media
+import ru.spiridonov.gallery.utils.ImageUtils
 import javax.inject.Inject
 
 class MediaItemAdapter @Inject constructor() :
@@ -39,17 +40,10 @@ class MediaItemAdapter @Inject constructor() :
             when (this) {
                 is EachMediaItemBinding -> {
                     mediaItem = item
-                    imageView.setImageBitmap(item.photoFile)
-                    /* val mediaPath = item.file_location
-                     CoroutineScope(Dispatchers.IO).launch {
-                         downloadFileUseCase.invoke(mediaPath, false) {
-                             it?.let {
-                                 CoroutineScope(Dispatchers.Main).launch {
-                                     imageView.setImageBitmap(it)
-                                 }
-                             }
-                         }
-                     }*/
+                    item.photoFile?.let { photo ->
+                        val bitmap = ImageUtils.getResizedBitmap(photo, 256)
+                        imageView.setImageBitmap(bitmap)
+                    }
                 }
             }
             root.setOnClickListener {

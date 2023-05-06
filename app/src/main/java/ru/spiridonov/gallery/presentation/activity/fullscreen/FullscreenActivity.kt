@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityFullscreenBinding
 import ru.spiridonov.gallery.presentation.viewmodels.ViewModelFactory
+import ru.spiridonov.gallery.utils.ImageUtils
 import javax.inject.Inject
 
 
@@ -36,7 +37,10 @@ class FullscreenActivity : AppCompatActivity() {
     private fun observeViewModel() {
         viewModel.media.observe(this) {
             binding.media = it
-            binding.fullImage.setImageBitmap(it.photoFile)
+            it.photoFile?.let { photo ->
+                val bitmap = ImageUtils.getResizedBitmap(photo, 2048)
+                binding.fullImage.setImageBitmap(bitmap)
+            }
         }
     }
 

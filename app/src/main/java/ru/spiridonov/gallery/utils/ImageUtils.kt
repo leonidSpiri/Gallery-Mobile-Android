@@ -58,7 +58,7 @@ object ImageUtils {
             else -> 0
         }
 
-    private fun showExif(exif: ExifInterface): String {
+    fun showExif(exif: ExifInterface): String {
         var myAttribute: String? = "Exif information ---\n"
         myAttribute += getTagString(ExifInterface.TAG_DATETIME, exif)
         myAttribute += getTagString(ExifInterface.TAG_FLASH, exif)

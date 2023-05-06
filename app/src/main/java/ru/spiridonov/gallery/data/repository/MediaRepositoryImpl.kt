@@ -40,7 +40,6 @@ class MediaRepositoryImpl @Inject constructor(
                         val mediaList =
                             dtoMapper.mapMediaListJsonContainerToMedia(mediaJsonContainer)
                                 .toMutableList()
-                        //sort medialist by dateCreated
                         mediaList.sortByDescending { it.date_created }
                         for (i in mediaList.indices) {
                             val media = mediaList[i]
@@ -84,7 +83,11 @@ class MediaRepositoryImpl @Inject constructor(
                         mediaStorage.addMedia(media)
                         Log.d("createPhotoMedia", "success")
                         Log.d("createPhotoMedia", media.toString())
-                        photo.delete()
+                        FileUtils.copyFile(
+                            application,
+                            photo.path,
+                            media.file_location
+                        )
                         callback(true)
                     }
                 }
@@ -127,7 +130,7 @@ class MediaRepositoryImpl @Inject constructor(
                         .also { response ->
                             response.bytes().let { bodyRes ->
                                 CoroutineScope(Dispatchers.Default).launch {
-                                    FileUtils.createFileFromBitmap(
+                                    FileUtils.createFileFromByteArray(
                                         application,
                                         bodyRes,
                                         mediaPath

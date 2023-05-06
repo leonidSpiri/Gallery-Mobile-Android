@@ -8,10 +8,11 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 object FileUtils {
 
-    fun createFileFromBitmap(context: Context, byteArray: ByteArray, fileName: String): File? {
+    fun createFileFromByteArray(context: Context, byteArray: ByteArray, fileName: String): File? {
         val file = File(context.cacheDir, fileName)
         file.createNewFile()
 
@@ -33,13 +34,18 @@ object FileUtils {
         return file
     }
 
+    fun copyFile(context: Context, oldPlace: String, newName: String) {
+        val file = File(oldPlace)
+        val newFile = File(context.cacheDir, newName)
+        file.copyTo(newFile, true)
+    }
+
     fun getFileFromCache(context: Context, mediaPath: String): File? {
         val file = File(context.cacheDir, mediaPath)
         if (file.exists())
             return file
         return null
     }
-
 
     fun getPath(context: Context, uri: Uri): String? {
         val data = arrayOf(MediaStore.Images.Media.DATA)
