@@ -1,5 +1,6 @@
 package ru.spiridonov.gallery.presentation.adapters
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -40,10 +41,8 @@ class MediaItemAdapter @Inject constructor() :
             when (this) {
                 is EachMediaItemBinding -> {
                     mediaItem = item
-                    item.photoFile?.let { photo ->
-                        val bitmap = ImageUtils.getResizedBitmap(photo, 256)
-                        imageView.setImageBitmap(bitmap)
-                    }
+                    val bitmap = item.photoFile?.let { ImageUtils.getResizedBitmap(it, 256) }
+                    imageView.setImageBitmap(bitmap)
                 }
             }
             root.setOnClickListener {

@@ -67,6 +67,7 @@ class HomeFragment : Fragment() {
         viewModel.downloadAllMediaInfo()
         viewModel.media.observe(viewLifecycleOwner) {
             Log.d("HomeFragment", "observeViewModel: $it")
+            mediaItemAdapter.submitList(null)
             mediaItemAdapter.submitList(it)
             mediaItemAdapter.notifyDataSetChanged()
         }

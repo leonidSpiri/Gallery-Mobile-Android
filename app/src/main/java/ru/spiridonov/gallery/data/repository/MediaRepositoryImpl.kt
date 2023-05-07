@@ -32,28 +32,27 @@ class MediaRepositoryImpl @Inject constructor(
     private val application: Application
 ) : MediaRepository {
     override suspend fun getMediaFromAlbum(albumName: String, callback: (List<Media>) -> Unit) {
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                val token = "Bearer " + sharedPref.getUser().accessToken
-                apiService.getMediaFromAlbum(path = albumName, token = token).also { response ->
-                    response.body()?.let { mediaJsonContainer ->
-                        val mediaList =
-                            dtoMapper.mapMediaListJsonContainerToMedia(mediaJsonContainer)
-                                .toMutableList()
-                        mediaList.sortByDescending { it.date_created }
-                        for (i in mediaList.indices) {
-                            val media = mediaList[i]
-                            downloadFile(media.file_location, false) { bitmap ->
-                                media.photoFile = bitmap
-                                mediaStorage.replaceMediaList(mediaList)
-                                callback(mediaList)
-                            }
+        try {
+            val token = "Bearer " + sharedPref.getUser().accessToken
+            apiService.getMediaFromAlbum(path = albumName, token = token).also { response ->
+                response.body()?.let { mediaJsonContainer ->
+                    val mediaList =
+                        dtoMapper.mapMediaListJsonContainerToMedia(mediaJsonContainer)
+                            .toMutableList()
+                    mediaList.sortByDescending { it.date_created }
+                    for (i in mediaList.indices) {
+                        val media = mediaList[i]
+                        downloadFile(media.file_location, true) { bitmap ->
+                            media.photoFile = bitmap
+                            media.isInGoodQuality = true
+                            mediaStorage.replaceMediaList(mediaList)
+                            callback(mediaList)
                         }
                     }
                 }
-            } catch (e: Exception) {
-                Log.d("UserRepositoryImpl", e.toString())
             }
+        } catch (e: Exception) {
+            Log.d("UserRepositoryImpl", e.toString())
         }
     }
 
@@ -66,13 +65,12 @@ class MediaRepositoryImpl @Inject constructor(
         location: String?,
         callback: (Boolean) -> Unit
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val reqFile: RequestBody =
-                    photo.asRequestBody("image/*".toMediaTypeOrNull())
-                val body = MultipartBody.Part.createFormData("file", photo.name, reqFile)
-                val token = "Bearer " + sharedPref.getUser().accessToken
-
+        try {
+            val reqFile: RequestBody =
+                photo.asRequestBody("image/*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData("file", photo.name, reqFile)
+            val token = "Bearer " + sharedPref.getUser().accessToken
+            CoroutineScope(Dispatchers.IO).launch {
                 apiService.uploadImage(token = token, file = body).also { response ->
                     response.body()?.let { mediaJson ->
                         val media = dtoMapper.mapMediaFileJsonContainerToMedia(mediaJson)
@@ -91,10 +89,10 @@ class MediaRepositoryImpl @Inject constructor(
                         callback(true)
                     }
                 }
-            } catch (e: Exception) {
-                Log.d("createPhotoMedia", e.toString())
-                callback(false)
             }
+        } catch (e: Exception) {
+            Log.d("createPhotoMedia", e.toString())
+            callback(false)
         }
     }
 
@@ -111,60 +109,40 @@ class MediaRepositoryImpl @Inject constructor(
         fullSize: Boolean,
         callback: (Bitmap?) -> Unit
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                FileUtils.getFileFromCache(application, mediaPath)?.let { createdFile ->
-                    var bitmap = BitmapFactory.decodeFile(createdFile.absolutePath)
-                    bitmap = ImageUtils.rotateImage(bitmap, createdFile.path)
-                    callback(bitmap)
-                    return@launch
+        val timeStart = System.currentTimeMillis()
+        try {
+            FileUtils.getFileFromCache(application, mediaPath)?.let { createdFile ->
+                var bitmap = BitmapFactory.decodeFile(createdFile.absolutePath)
+                bitmap = ImageUtils.rotateImage(bitmap, createdFile.path)
+                callback(bitmap)
+                return
+            }
+            val token = "Bearer " + sharedPref.getUser().accessToken
+            apiService.downloadMediaFile(
+                token = token,
+                path = "full",
+                fileName = mediaPath
+            )
+                .also { response ->
+                    response.bytes().let { bodyRes ->
+                        FileUtils.createFileFromByteArray(
+                            application,
+                            bodyRes,
+                            mediaPath
+                        )?.let { file ->
+                            var bitmap = BitmapFactory.decodeFile(file.absolutePath)
+                            bitmap = ImageUtils.rotateImage(bitmap, file.path)
+                            callback(bitmap)
+                            val timeEnd = System.currentTimeMillis()
+                            Log.d("downloadMedia", "time: ${timeEnd - timeStart}")
+                        }
+
+                    }
                 }
 
-                val token = "Bearer " + sharedPref.getUser().accessToken
-                if (fullSize)
-                    apiService.downloadMediaFile(
-                        token = token,
-                        path = "full",
-                        fileName = mediaPath
-                    )
-                        .also { response ->
-                            response.bytes().let { bodyRes ->
-                                CoroutineScope(Dispatchers.Default).launch {
-                                    FileUtils.createFileFromByteArray(
-                                        application,
-                                        bodyRes,
-                                        mediaPath
-                                    )?.let { file ->
-                                        var bitmap = BitmapFactory.decodeFile(file.absolutePath)
-                                        bitmap = ImageUtils.rotateImage(bitmap, file.path)
-                                        callback(bitmap)
-                                    }
-                                }
-                            }
-                        }
-                else
-                    apiService.downloadMediaBase64(
-                        token = token,
-                        path = "thumbnail",
-                        fileName = mediaPath
-                    )
-                        .also { response ->
-                            response.body()?.let { bodyRes ->
-                                CoroutineScope(Dispatchers.Default).launch {
-                                    val decodedString: ByteArray =
-                                        Base64.decode(bodyRes.data, Base64.DEFAULT)
-                                    val decodedByte = BitmapFactory.decodeByteArray(
-                                        decodedString,
-                                        0,
-                                        decodedString.size
-                                    )
-                                    callback(decodedByte)
-                                }
-                            }
-                        }
-            } catch (e: Exception) {
-                Log.d("downloadMedia", e.toString())
-            }
+        } catch (e: Exception) {
+            Log.d("downloadMedia", e.toString())
         }
+
     }
 }
