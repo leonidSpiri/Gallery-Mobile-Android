@@ -30,5 +30,7 @@ class HomeViewModel @Inject constructor(
         MediaStorage.getMediaList().also {
             if (it != emptyList<Media>())
                 _media.value = it
+            else
+                downloadAllMediaInfo()
         }
 }
