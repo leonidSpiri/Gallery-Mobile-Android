@@ -18,6 +18,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.ViewModelProvider
 import ru.spiridonov.gallery.GalleryApp
 import ru.spiridonov.gallery.databinding.ActivityAddMediaBinding
@@ -139,9 +140,26 @@ class AddMediaActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 try {
+
                     if (imageUri?.path == null)
                         imageUri = result.data?.data
+
                     if (imageUri != null) {
+                        contentResolver.openInputStream(imageUri!!)?.let { inputStream ->
+                            val exif = ExifInterface(inputStream)
+                            val orientation = exif.getAttributeInt(
+                                ExifInterface.TAG_ORIENTATION,
+                                ExifInterface.ORIENTATION_NORMAL
+                            )
+                            val location = exif.latLong
+                            val date = exif.getAttribute(ExifInterface.TAG_DATETIME)
+                            val gpsDate = exif.getAttribute(ExifInterface.TAG_GPS_DATESTAMP)
+                            Log.d("TAG", "orientation: $orientation")
+                            Log.d("TAG", "location: ${location?.get(0)} ${location?.get(1)}")
+                            Log.d("TAG", "date: $date")
+                            Log.d("TAG", "gpsDate: $gpsDate")
+                        }
+
                         fullBitmap = viewModel.createBitmapFromUri(this, imageUri!!)
                         binding.imgPhoto.setImageBitmap(fullBitmap)
                     } else {
@@ -167,6 +185,8 @@ class AddMediaActivity : AppCompatActivity() {
                 imageUri = null
             }
         }
+
+
 
     private fun startLocationService() {
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager?
